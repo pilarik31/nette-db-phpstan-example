@@ -1,0 +1,1 @@
+# nette-db-phpstan-example
