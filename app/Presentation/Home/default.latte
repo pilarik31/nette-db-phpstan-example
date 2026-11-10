@@ -1,0 +1,80 @@
+{templateType App\Presentation\Home\HomeTemplate}
+
+{block title}{$pageTitle}{/block}
+
+{block content}
+<main>
+	<header>
+		<p class="eyebrow">Nette Database · ukázka modelu</p>
+		<h1>{$pageTitle}</h1>
+		<p>Seznam načtený přes repository. Kliknutím na jméno zobrazíte detail uživatele.</p>
+	</header>
+
+	<section aria-labelledby="users-heading">
+		<h2 id="users-heading">Seznam uživatelů <span class="count">{count($users)}</span></h2>
+		{if $users === []}
+			<p>V databázi zatím nejsou žádní uživatelé.</p>
+		{else}
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr><th scope="col">ID</th><th scope="col">Jméno</th><th scope="col">E-mail</th></tr>
+					</thead>
+					<tbody>
+						<tr n:foreach="$users as $item">
+							<td>{$item->id}</td>
+							<td><a n:href="default, id: $item->id">{$item->name}</a></td>
+							<td>{$item->email}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		{/if}
+	</section>
+
+	<section n:if="$selectedUser !== null" aria-labelledby="detail-heading">
+		<h2 id="detail-heading">Detail uživatele</h2>
+		<dl>
+			<dt>ID</dt><dd>{$selectedUser->id}</dd>
+			<dt>Jméno</dt><dd>{$selectedUser->name}</dd>
+			<dt>E-mail</dt><dd>{$selectedUser->email}</dd>
+			<dt>Popisek z modelu</dt><dd>{$selectedUser->getLabel()}</dd>
+		</dl>
+		<a n:href="default, id: null">Zpět na seznam</a>
+	</section>
+
+	<p n:if="$demoDatabase" class="notice">Ukázková data jsou v SQLite v paměti a při každém požadavku se vytvoří znovu.</p>
+</main>
+
+<style>
+	:root { color-scheme: light; font: 16px/1.6 system-ui, sans-serif; color: #172b40; background: #f4f7fa; }
+	* { box-sizing: border-box; }
+	body { margin: 0; }
+	main { max-width: 900px; margin: 64px auto; padding: 0 24px; }
+	header { margin-bottom: 32px; }
+	h1 { margin: 4px 0 12px; font-size: clamp(28px, 5vw, 40px); line-height: 1.2; }
+	h2 { margin: 0 0 20px; font-size: 20px; }
+	p { margin: 0; }
+	.eyebrow { color: #37637e; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+	section { margin-bottom: 24px; padding: 28px; border: 1px solid #dce5ec; border-radius: 12px; background: white; }
+	.count { display: inline-block; margin-left: 8px; padding: 0 8px; border-radius: 6px; color: #37637e; background: #edf4f8; font-size: 14px; }
+	.table-wrap { overflow-x: auto; }
+	table { width: 100%; border-collapse: collapse; text-align: left; }
+	th, td { padding: 14px 12px; border-bottom: 1px solid #e5ebf0; white-space: nowrap; }
+	th { color: #536b7e; font-size: 13px; }
+	tbody tr:last-child td { border-bottom: 0; }
+	a { color: #096b9c; text-underline-offset: 3px; }
+	a:hover { color: #034668; }
+	a:focus-visible { outline: 2px solid #096b9c; outline-offset: 4px; }
+	dl { display: grid; grid-template-columns: 160px 1fr; gap: 12px 20px; margin: 0 0 24px; }
+	dt { color: #536b7e; }
+	dd { margin: 0; overflow-wrap: anywhere; }
+	.notice { color: #536b7e; font-size: 14px; }
+	@media (max-width: 600px) {
+		main { margin: 32px auto; padding: 0 16px; }
+		section { padding: 20px; }
+		dl { grid-template-columns: 1fr; gap: 4px; }
+		dd { margin-bottom: 12px; }
+	}
+</style>
+{/block}

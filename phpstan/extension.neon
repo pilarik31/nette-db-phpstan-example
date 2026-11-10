@@ -1,0 +1,5 @@
+services:
+	-
+		class: App\PHPStan\ModelExplorerReturnTypeExtension
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension

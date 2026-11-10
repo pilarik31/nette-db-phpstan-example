@@ -1,0 +1,14 @@
+services:
+	- App\Core\RouterFactory::createRouter
+	database.default.explorer:
+		alteration: true
+		create: App\Model\Database\ModelExplorer
+
+
+search:
+	-	in: %appDir%
+		classes:
+			- *Facade
+			- *Factory
+			- *Repository
+			- *Service
