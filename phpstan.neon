@@ -1,12 +1,8 @@
 # Nette extensions are registered by phpstan/extension-installer.
-includes:
-	- phpstan/extension.neon
-
 parameters:
 	level: max
 	paths:
 		- app
 		- bin
-		- phpstan
 		- www/index.php
 	tmpDir: temp/phpstan

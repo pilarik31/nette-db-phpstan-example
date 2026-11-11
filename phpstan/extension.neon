@@ -1,5 +1,0 @@
-services:
-	-
-		class: App\PHPStan\ExplorerReturnTypeExtension
-		tags:
-			- phpstan.broker.dynamicMethodReturnTypeExtension

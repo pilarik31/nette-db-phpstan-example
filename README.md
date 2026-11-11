@@ -93,14 +93,28 @@ Explorer loads a row, including insert refetches and relationships. Unmapped
 tables use the original `ActiveRow`. The DI definition replaces `database.default.explorer`
 with `App\Database\Explorer`, preserving the configured connection and autowiring.
 
-The project PHPStan extension
-[`ExplorerReturnTypeExtension`](phpstan/ExplorerReturnTypeExtension.php) reads the
-same registry and infers `Selection<User>` from
-`App\Database\Explorer::table('users')`. The types propagate through
-`get()`, `fetch()`, `fetchAll()`, query chaining and `foreach`. An unknown table
-name remains `Selection<ActiveRow>`. Inject `App\Database\Explorer` when you want
-this inference; a variable declared only as the parent `Nette\Database\Explorer`
-does not carry the custom mapping type information.
+`App\Database\Explorer::tableFor()` accepts a `class-string<T>` and returns
+`Selection<T>`. Both PHPStan and Intelephense infer the row type directly from
+the supplied model class:
+
+```php
+// $database is an injected App\Database\Explorer.
+$users = $database->tableFor(User::class); // Selection<User>
+$user = $users->get(1);                   // User|null
+if ($user !== null) {
+	echo $user->getLabel();
+}
+```
+
+The types propagate through `get()`, `fetch()`, `fetchAll()`, query chaining and
+`foreach`. `tableFor()` looks up the table in `ROW_CLASSES` and throws
+`InvalidArgumentException` for an unregistered model, before querying the
+database. A single `@var Selection<T>` annotation at construction connects the
+checked registry entry to Nette's row factory. Callers need no type overrides.
+The configured connection, conventions and cache storage are preserved.
+There is no project PHPStan extension or per-table conditional return annotation.
+The inherited `table('users')` still creates mapped rows at runtime, but its
+declared type is the generic `Selection<ActiveRow>`.
 
 Add another model by extending `ActiveRow`, documenting its columns with
 `@property-read`, and adding its table to `ROW_CLASSES`. Use nullable types for
@@ -122,7 +136,7 @@ the inherited array access and `ref()` / `related()` method signatures still
 return their generic Nette types. Runtime row mapping also works for relations,
 but precise static relation types require additional declarations.
 
-No baseline, error ignores or inline `@var` overrides are needed.
+No baseline or error ignores are needed.
 
 The example schema belongs to the demo. A persistent application
 database needs its own schema/migrations.
@@ -174,39 +188,22 @@ To reproduce the typed rows and PHPStan inference in another Nette project:
    For a named connection, replace `default` with its configured name. Register
    repositories explicitly or copy the `*Repository` discovery rule from
    [`config/services.neon`](config/services.neon). Inject
-   `App\Database\Explorer` into repositories so PHPStan can apply the mapping.
+   `App\Database\Explorer` into repositories to use `tableFor(Model::class)`.
    Connection settings and service naming follow the
    [Nette Database configuration](https://doc.nette.org/en/database/configuration);
    `alteration` modifies the service created by the framework as described in
    [Nette DI service definitions](https://doc.nette.org/en/dependency-injection/services).
 
-4. **Wire up the project PHPStan extension.** Copy
-   [`phpstan/ExplorerReturnTypeExtension.php`](phpstan/ExplorerReturnTypeExtension.php)
-   and [`phpstan/extension.neon`](phpstan/extension.neon). If namespaces change,
-   update both the extension's Explorer import and its service registration.
-   Merge this development autoload mapping into `composer.json`:
-
-   ```json
-   {
-       "autoload-dev": {
-           "psr-4": {
-               "App\\PHPStan\\": "phpstan/"
-           }
-       }
-   }
-   ```
-
-   Include `phpstan/extension.neon` in the target `phpstan.neon`, add `phpstan/`
-   to the analysed paths, and choose the application's paths and analysis level
-   (`max` here). Run `composer dump-autoload` after merging the mappings.
-   Both runtime row creation and static inference must use the same
-   `Explorer::ROW_CLASSES` registry. Inference requires a literal table name
-   (or a union of known literal strings); an arbitrary `string` cannot identify
-   a specific model.
+4. **Use the generic model API.** Replace queries such as `table('users')` with
+   `tableFor(User::class)` in repositories. Preserve the `@template T`,
+   `@param class-string<T>` and `@return Selection<T>` annotations on `tableFor()`
+   and its construction annotation. PHPStan and Intelephense use these to infer
+   the row type without a custom analysis extension. Add the application's paths
+   to `phpstan.neon` and choose an analysis level (`max` here).
 
 5. **Provide the schema and verify the result.** Create the target database's
    schema with its own migrations, then run `vendor/bin/phpstan analyse`.
-   Check that `$database->table('users')->get($id)` is inferred as `?User`
+   Check that `$database->tableFor(User::class)->get($id)` is inferred as `?User`
    and that a loaded row is a `User` at runtime, with access to `getLabel()`.
    Adapt these checks to the target model. Keep repository return types such as
    `?User` and `list<User>`; preserve the `insert()` result guard from
@@ -229,10 +226,9 @@ Run PHPStan with:
 
 	composer run phpstan
 
-The configuration in `phpstan.neon` analyses `app/`, `bin/`, `phpstan/` and
+The configuration in `phpstan.neon` analyses `app/`, `bin/` and
 `www/index.php` at `level: max`, which always selects PHPStan's highest available
 level. The installed Nette extension is loaded by `phpstan/extension-installer`.
-The project extension is registered separately through `phpstan/extension.neon`.
 PHPStan stores its cache in `temp/phpstan/`.
 
 See the [PHPStan configuration reference](https://phpstan.org/config-reference).

@@ -16,7 +16,7 @@ final class UserRepository
 
 	public function findById(int $id): ?User
 	{
-		return $this->database->table('users')->get($id);
+		return $this->database->tableFor(User::class)->get($id);
 	}
 
 	/**
@@ -24,12 +24,12 @@ final class UserRepository
 	 */
 	public function findAll(): array
 	{
-		return array_values($this->database->table('users')->order('name, id')->fetchAll());
+		return array_values($this->database->tableFor(User::class)->order('name, id')->fetchAll());
 	}
 
 	public function create(string $name, string $email): User
 	{
-		$row = $this->database->table('users')->insert([
+		$row = $this->database->tableFor(User::class)->insert([
 			'name' => $name,
 			'email' => $email,
 		]);
