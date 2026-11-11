@@ -2,7 +2,7 @@ services:
 	- App\Core\RouterFactory::createRouter
 	database.default.explorer:
 		alteration: true
-		create: App\Model\Database\ModelExplorer
+		create: App\Database\Explorer
 
 
 search:

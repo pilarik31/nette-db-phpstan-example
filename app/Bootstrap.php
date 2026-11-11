@@ -18,6 +18,7 @@ class Bootstrap
 		$this->rootDir = dirname(__DIR__);
 		$this->configurator = new Configurator();
 		$this->configurator->setTempDirectory($this->rootDir . '/temp');
+		$this->configurator->setDebugMode(true);
 	}
 
 	public function bootWebApplication(): Nette\DI\Container

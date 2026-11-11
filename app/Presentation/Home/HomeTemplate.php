@@ -2,7 +2,7 @@
 
 namespace App\Presentation\Home;
 
-use App\Model\User\User;
+use App\Database\Model\User;
 use Nette\Bridges\ApplicationLatte\Template;
 
 

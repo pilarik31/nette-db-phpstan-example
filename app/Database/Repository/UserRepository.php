@@ -1,15 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace App\Model\User;
+namespace App\Database\Repository;
 
-use App\Model\Database\ModelExplorer;
+use App\Database\Explorer;
+use App\Database\Model\User;
 use UnexpectedValueException;
 
 
 final class UserRepository
 {
 	public function __construct(
-		private readonly ModelExplorer $database,
+		private readonly Explorer $database,
 	) {
 	}
 
@@ -33,7 +34,6 @@ final class UserRepository
 			'email' => $email,
 		]);
 
-		// insert() can also return an array or a count for other table/input shapes.
 		if (!$row instanceof User) {
 			throw new UnexpectedValueException('Expected the inserted users row; check the table primary key.');
 		}

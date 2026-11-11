@@ -2,8 +2,8 @@
 
 namespace App\Presentation\Home;
 
-use App\Model\Database\DatabaseDemoService;
-use App\Model\User\UserRepository;
+use App\Database\DatabaseDemoService;
+use App\Database\Repository\UserRepository;
 use Nette;
 
 

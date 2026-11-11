@@ -2,7 +2,7 @@
 
 namespace App\PHPStan;
 
-use App\Model\Database\ModelExplorer;
+use App\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 use PhpParser\Node\Expr\MethodCall;
@@ -15,11 +15,11 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
 
-final class ModelExplorerReturnTypeExtension implements DynamicMethodReturnTypeExtension
+final class ExplorerReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
 	public function getClass(): string
 	{
-		return ModelExplorer::class;
+		return Explorer::class;
 	}
 
 
@@ -48,7 +48,7 @@ final class ModelExplorerReturnTypeExtension implements DynamicMethodReturnTypeE
 
 		$types = [];
 		foreach ($tables as $table) {
-			$rowClass = ModelExplorer::ROW_CLASSES[$table->getValue()] ?? ActiveRow::class;
+			$rowClass = Explorer::ROW_CLASSES[$table->getValue()] ?? ActiveRow::class;
 			$types[] = new GenericObjectType(Selection::class, [new ObjectType($rowClass)]);
 		}
 

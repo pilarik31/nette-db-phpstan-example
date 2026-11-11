@@ -1,16 +1,19 @@
 <?php declare(strict_types=1);
 
-namespace App\Model\Database;
+namespace App\Database;
 
-use App\Model\User\User;
-use Nette\Database\Explorer;
+use App\Database\Model\User;
+use Nette\Database\Explorer as NetteExplorer;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 
 
-final class ModelExplorer extends Explorer
+final class Explorer extends NetteExplorer
 {
-	// Shared by row creation and the PHPStan extension. Add further models here.
+	/**
+	 * Shared by row creation and the PHPStan extension.
+	 * Add further models here.
+	 */
 	public const ROW_CLASSES = [
 		'users' => User::class,
 	];

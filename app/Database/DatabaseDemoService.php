@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace App\Model\Database;
+namespace App\Database;
 
-use App\Model\User\UserRepository;
+use App\Database\Repository\UserRepository;
 use Nette\Database\Helpers;
 
 
@@ -12,7 +12,7 @@ final class DatabaseDemoService
 
 
 	public function __construct(
-		private readonly ModelExplorer $database,
+		private readonly Explorer $database,
 		private readonly UserRepository $users,
 	) {
 	}
@@ -25,7 +25,7 @@ final class DatabaseDemoService
 		}
 
 		if (!$this->initialized) {
-			Helpers::loadFromFile($connection, dirname(__DIR__, 3) . '/examples/users.sql');
+			Helpers::loadFromFile($connection, dirname(__DIR__, 2) . '/examples/users.sql');
 			$this->users->create('Ada Lovelace', 'ada@example.com');
 			$this->users->create('Grace Hopper', 'grace@example.com');
 			$this->users->create('Margaret Hamilton', 'margaret@example.com');
