@@ -143,13 +143,12 @@ To reproduce the typed rows and PHPStan inference in another Nette project:
 
    ```bash
    composer require nette/database:^3.2.10
-   composer require --dev phpstan/phpstan:^2.3.5 phpstan/phpstan-nette:^2.0.15 phpstan/extension-installer:^1.4 nette/phpstan-rules:^1.0
+   composer require --dev phpstan/phpstan:^2.3.5 phpstan/phpstan-nette:^2.0.15 phpstan/extension-installer:^1.4
    ```
 
    Allow `phpstan/extension-installer` in Composer's `config.allow-plugins` so
-   the Nette extensions load automatically. Alternatively, include
-   `vendor/phpstan/phpstan-nette/extension.neon` and
-   `vendor/nette/phpstan-rules/extension.neon` explicitly in `phpstan.neon`
+   the Nette extension loads automatically. Alternatively, include
+   `vendor/phpstan/phpstan-nette/extension.neon` explicitly in `phpstan.neon`
    without the installer.
 
 2. **Copy the runtime classes.** Transfer
@@ -232,7 +231,7 @@ Run PHPStan with:
 
 The configuration in `phpstan.neon` analyses `app/`, `bin/`, `phpstan/` and
 `www/index.php` at `level: max`, which always selects PHPStan's highest available
-level. The installed Nette extensions are loaded by `phpstan/extension-installer`.
+level. The installed Nette extension is loaded by `phpstan/extension-installer`.
 The project extension is registered separately through `phpstan/extension.neon`.
 PHPStan stores its cache in `temp/phpstan/`.
 
