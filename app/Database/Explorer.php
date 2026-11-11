@@ -33,6 +33,9 @@ final class Explorer extends NetteExplorer
 	}
 
 	/**
+	 * Gets table for the specified model.
+	 * 
+	 * @throws InvalidArgumentException When specified model has no registered table.
 	 * @template T of ActiveRow
 	 * @param class-string<T> $model
 	 * @return NetteSelection<T>
